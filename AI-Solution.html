@@ -1,91 +1,48 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myfxbook Widget (靠左對齊)</title>
 
-    <meta charset="UTF-8">
+    <style>
+        body {
+            /* 移除所有內外邊距 */
+            margin: 0;
+            
+            /* 左右留一點空間，避免圖片緊貼螢幕邊緣 */
+            padding: 0 20px; 
+            
+            /* 使用 Flexbox */
+            display: flex;
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            /* --- 修改點 --- */
+            /* 將 center (置中) 改為 flex-start (從頭開始)，即可靠左對齊 */
+            justify-content: flex-start; 
+            
+            /* 繼續保持垂直置中，如果您希望也靠上對齊，可以將此行改為 align-items: flex-start; */
+            align-items: center;
 
-    <title>Myfxbook Widget</title>
+            /* 確保佈局至少有一個螢幕的高度 */
+            min-height: 100vh; 
+            
+            /* 加上此行可以避免 padding 造成卷軸，是個好習慣 */
+            box-sizing: border-box;
+        }
 
-
-
-    <style>
-
-        /* 1. 修正 Body 樣式：移除背景色與可能導致卷軸的 padding */
-
-        body {
-
-            /* 移除所有內外邊距 */
-
-            margin: 0;
-
-            padding: 0; 
-
-            
-
-            /* 使用 Flexbox 讓圖片在頁面中垂直和水平置中 */
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-
-
-            /* 確保佈局至少有一個螢幕的高度 */
-
-            min-height: 100vh; 
-
-        }
-
-
-
-        /* 2. 修正圖片樣式：簡化為一個適用於所有裝置的規則 */
-
-        .fx-widget-image {
-
-            /* 關鍵！讓圖片以自己的原始寬度顯示 */
-
-            width: auto;
-
-
-
-            /* 關鍵！但在小螢幕上，如果圖片太寬，不能超過螢幕寬度（避免水平卷軸） */
-
-            max-width: 100%;
-
-
-
-            /* 讓高度隨寬度自動縮放，保持比例 */
-
-            height: auto;
-
-            
-
-            /* 將圖片轉為區塊元素，可以避免一些置中時的對齊小問題 */
-
-            display: block;
-
-        }
-
-    </style>
-
+        .fx-widget-image {
+            /* 圖片樣式維持不變 */
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
 </head>
-
-
 
 <body>
 
-
-
-    <img alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11345379&type=6"/>
-
-
+    <img class="fx-widget-image" alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11345379&type=6">
 
 </body>
-
 </html>
