@@ -1,46 +1,91 @@
 <!DOCTYPE html>
+
 <html lang="zh-TW">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Myfxbook Widget</title>
 
-    <style>
-        /* 1. 修正 Body 樣式：移除背景色與可能導致卷軸的 padding */
-        body {
-            /* 移除所有內外邊距 */
-            margin: 0;
-            padding: 0; 
-            
-            /* 使用 Flexbox 讓圖片在頁面中垂直和水平置中 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+    <meta charset="UTF-8">
 
-            /* 確保佈局至少有一個螢幕的高度 */
-            min-height: 100vh; 
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* 2. 修正圖片樣式：簡化為一個適用於所有裝置的規則 */
-        .fx-widget-image {
-            /* 關鍵！讓圖片以自己的原始寬度顯示 */
-            width: auto;
+    <title>Myfxbook Widget</title>
 
-            /* 關鍵！但在小螢幕上，如果圖片太寬，不能超過螢幕寬度（避免水平卷軸） */
-            max-width: 100%;
 
-            /* 讓高度隨寬度自動縮放，保持比例 */
-            height: auto;
-            
-            /* 將圖片轉為區塊元素，可以避免一些置中時的對齊小問題 */
-            display: block;
-        }
-    </style>
+
+    <style>
+
+        /* 1. 修正 Body 樣式：移除背景色與可能導致卷軸的 padding */
+
+        body {
+
+            /* 移除所有內外邊距 */
+
+            margin: 0;
+
+            padding: 0; 
+
+            
+
+            /* 使用 Flexbox 讓圖片在頁面中垂直和水平置中 */
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+
+
+            /* 確保佈局至少有一個螢幕的高度 */
+
+            min-height: 100vh; 
+
+        }
+
+
+
+        /* 2. 修正圖片樣式：簡化為一個適用於所有裝置的規則 */
+
+        .fx-widget-image {
+
+            /* 關鍵！讓圖片以自己的原始寬度顯示 */
+
+            width: auto;
+
+
+
+            /* 關鍵！但在小螢幕上，如果圖片太寬，不能超過螢幕寬度（避免水平卷軸） */
+
+            max-width: 100%;
+
+
+
+            /* 讓高度隨寬度自動縮放，保持比例 */
+
+            height: auto;
+
+            
+
+            /* 將圖片轉為區塊元素，可以避免一些置中時的對齊小問題 */
+
+            display: block;
+
+        }
+
+    </style>
+
 </head>
+
+
 
 <body>
 
-    <img class="fx-widget-image" alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11345379&type=6">
+
+
+    <img alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11345379&type=6"/>
+
+
 
 </body>
+
 </html>
