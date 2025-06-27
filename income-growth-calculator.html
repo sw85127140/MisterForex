@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>進階複利增長計算器 (激勵版)</title>
+    <title>複利增長計算器</title>
     <style>
-        /* --- CSS 樣式與前一版相同 --- */
+        /* --- CSS 樣式 --- */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f7f7f7;
@@ -78,24 +78,33 @@
             width: 22px; height: 22px; background: #333333; cursor: pointer; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
         .result-section {
-            margin-top: 30px;
-            width: 100%;
-            overflow-x: auto;
+            margin-top: 25px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            max-height: 450px; 
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         #projection-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 15px;
         }
-        #projection-table th, #projection-table td {
+        #projection-table th {
             padding: 12px 10px;
             text-align: right;
-            border-bottom: 1px solid #eeeeee;
-        }
-        #projection-table th {
             background-color: #f9f9f9;
             color: #333333;
             font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        #projection-table td {
+            padding: 12px 10px;
+            text-align: right;
+            border-bottom: 1px solid #eeeeee;
         }
         #projection-table tr:last-child td { border-bottom: none; }
         #projection-table tr:nth-child(even) { background-color: #fdfdfd; }
@@ -103,32 +112,22 @@
             text-align: center;
             font-weight: bold;
         }
-        /* --- 新增：Notion 操作提示樣式 --- */
-        .notion-helper {
-            text-align: center;
-            font-size: 13px;
-            color: #999999;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-        }
     </style>
 </head>
 <body>
 
     <div class="calculator-container">
-        <h2>進階複利增長計算器 (激勵版)</h2>
+        <h2>複利增長計算器</h2>
         <p class="description">
-            模擬每年投入新資金(美金)，並計入投資本身報酬與舊用戶加碼後，預估的台幣收益。
+            模擬每年投入新資金(美金)，並計入投資本身報酬與舊用戶加碼後，預估的佣金收益。
         </p>
-        
+
         <div class="input-group">
             <label for="new-users">每年新招攬用戶數 <span class="value-display" id="new-users-value">10 人</span></label>
             <input type="range" id="new-users" min="1" max="50" step="1" value="10">
         </div>
         <div class="input-group">
-            <label for="avg-investment">新用戶平均資金 (美金) <span class="value-display" id="avg-investment-value">$ 10,000</span></label>
+            <label for="avg-investment">新用戶平均資金 <span class="value-display" id="avg-investment-value">$ 10,000</span></label>
             <input type="range" id="avg-investment" min="1000" max="100000" step="1000" value="10000">
         </div>
         <div class="input-group">
@@ -154,21 +153,15 @@
                     <tr>
                         <th>年度</th>
                         <th>總管理資金 (美金)</th>
-                        <th>當年度總佣金 (台幣)</th>
-                        <th>當年度月均佣金 (台幣)</th>
+                        <th>每月平均佣金 (台幣)</th>
                     </tr>
                 </thead>
                 <tbody id="projection-tbody"></tbody>
             </table>
         </div>
-
-        <div class="notion-helper">
-            <p>💡 如果計算器顯示不完整，請用滑鼠拖動此區塊的「下邊框」以調整高度。</p>
-        </div>
     </div>
 
     <script>
-        // JavaScript 程式碼部分與前一版完全相同，無需改動
         const sliders = {
             newUsers: document.getElementById('new-users'),
             avgInvestment: document.getElementById('avg-investment'),
@@ -213,15 +206,15 @@
                 const investmentProfitUSD = capitalBaseUSD * investmentReturnRate;
                 const endOfYearCapitalUSD = capitalBaseUSD + investmentProfitUSD;
 
+                // 佣金計算
                 const annualCommissionUSD = endOfYearCapitalUSD * commissionRate;
-                const annualCommissionTWD = annualCommissionUSD * USD_TO_TWD_RATE;
-                const monthlyCommissionTWD = annualCommissionTWD / 12;
+                const monthlyCommissionTWD = (annualCommissionUSD * USD_TO_TWD_RATE) / 12;
 
                 const row = document.createElement('tr');
+                // 修改(2): 移除顯示 "當年度總佣金" 的那一欄 (<td>)
                 row.innerHTML = `
                     <td>第 ${i} 年</td>
                     <td>$ ${Math.round(endOfYearCapitalUSD).toLocaleString()}</td>
-                    <td>${Math.round(annualCommissionTWD).toLocaleString()}</td>
                     <td>${Math.round(monthlyCommissionTWD).toLocaleString()}</td>
                 `;
                 projectionTbody.appendChild(row);
