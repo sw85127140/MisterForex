@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>佣金利潤計算器</title>
+    <style>
+        /* --- CSS 樣式 --- */
+        :root {
+            --primary-color: #007bff;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #333;
+            --label-color: #555;
+            --result-color: #28a745;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .calculator-container {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--label-color);
+            margin-bottom: 10px;
+        }
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        input[type="range"] {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 2px solid var(--card-background);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 2px solid var(--card-background);
+        }
+        .value-display {
+            background-color: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .results h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #0050b3;
+        }
+        #profitResult {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--result-color);
+            margin-top: 10px;
+        }
+
+        /* --- RWD 響應式設計 --- */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .calculator-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .input-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .value-display {
+                margin-top: 10px;
+                text-align: center;
+            }
+            #profitResult {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <h1>佣金利潤計算器</h1>
+
+        <main>
+            <div class="form-group">
+                <label for="avgDeposit">平均每個用戶入金量</label>
+                <div class="input-wrapper">
+                    <input type="range" id="avgDeposit" min="500" max="100000" step="500" value="10000">
+                    <span id="avgDepositValue" class="value-display"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="userCount">招攬用戶總數</label>
+                <div class="input-wrapper">
+                    <input type="range" id="userCount" min="1" max="10000" step="1" value="10">
+                    <span id="userCountValue" class="value-display"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="commissionRate">佣金利潤率 (%)</label>
+                <div class="input-wrapper">
+                    <input type="range" id="commissionRate" min="0.5" max="5" step="0.5" value="1.5">
+                    <span id="commissionRateValue" class="value-display"></span>
+                </div>
+            </div>
+        </main>
+
+        <footer class="results">
+            <h2>預估利潤</h2>
+            <div id="profitResult"></div>
+        </footer>
+    </div>
+
+    <script>
+    // --- JavaScript 邏輯 ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // 獲取所有需要的 DOM 元素
+        const avgDepositSlider = document.getElementById('avgDeposit');
+        const userCountSlider = document.getElementById('userCount');
+        const commissionRateSlider = document.getElementById('commissionRate');
+
+        const avgDepositValueSpan = document.getElementById('avgDepositValue');
+        const userCountValueSpan = document.getElementById('userCountValue');
+        const commissionRateValueSpan = document.getElementById('commissionRateValue');
+
+        const profitResultDiv = document.getElementById('profitResult');
+
+        // 更新顯示數值並執行計算的函式
+        function updateCalculator() {
+            // 1. 從滑桿獲取數值
+            const avgDeposit = parseFloat(avgDepositSlider.value);
+            const userCount = parseInt(userCountSlider.value);
+            const commissionRate = parseFloat(commissionRateSlider.value);
+
+            // 2. 更新滑桿旁的顯示數值
+            avgDepositValueSpan.textContent = avgDeposit.toLocaleString('zh-TW');
+            userCountValueSpan.textContent = userCount.toLocaleString('zh-TW');
+            commissionRateValueSpan.textContent = commissionRate.toFixed(1) + '%';
+
+            // 3. 計算利潤
+            // 利潤 = 平均入金量 * 用戶數 * (佣金率 / 100)
+            const profit = avgDeposit * userCount * (commissionRate / 100);
+
+            // 4. 將結果格式化並顯示
+            // 使用 toLocaleString 來加上千分位符號
+            profitResultDiv.textContent = 'NT$ ' + Math.round(profit).toLocaleString('zh-TW');
+        }
+
+        // 為所有滑桿添加 'input' 事件監聽器
+        // 'input' 事件會在滑桿拖動時即時觸發
+        avgDepositSlider.addEventListener('input', updateCalculator);
+        userCountSlider.addEventListener('input', updateCalculator);
+        commissionRateSlider.addEventListener('input', updateCalculator);
+
+        // 頁面載入時，立即執行一次以顯示預設值
+        updateCalculator();
+    });
+    </script>
+
+</body>
+</html>
