@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>定期定額投資增長計算器</title>
+    <title>投資增長計算器</title>
     <style>
-        /* --- CSS 樣式 --- */
+        /* --- CSS 樣式與前一版相同 --- */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f7f7f7;
@@ -117,18 +117,18 @@
 <body>
 
     <div class="calculator-container">
-        <h2>定期定額投資增長計算器</h2>
+        <h2>投資增長計算器</h2>
         <p class="description">
-            透過單筆投入加上每月定期定額的策略，看看您的資金在複利效應下能增長到多少。
+            透過單筆投入加上每月定期定額，預估您的資產在複利效應下的增長。
         </p>
 
         <div class="input-group">
-            <label for="initial-investment">首次單筆投入金額 (美金) <span class="value-display" id="initial-investment-value">$ 2,000</span></label>
+            <label for="initial-investment">首次單筆投入金額 <span class="value-display" id="initial-investment-value">$ 2,000</span></label>
             <input type="range" id="initial-investment" min="500" max="30000" step="500" value="2000">
         </div>
         <div class="input-group">
-            <label for="monthly-addition">每月加碼金額 (美金) <span class="value-display" id="monthly-addition-value">$ 100</span></label>
-            <input type="range" id="monthly-addition" min="100" max="2500" step="100" value="100">
+            <label for="monthly-addition">每月加碼金額 <span class="value-display" id="monthly-addition-value">$ 100</span></label>
+            <input type="range" id="monthly-addition" min="0" max="2500" step="100" value="100">
         </div>
         <div class="input-group">
             <label for="annual-return">年化報酬率 <span class="value-display" id="annual-return-value">10 %</span></label>
@@ -144,8 +144,8 @@
                 <thead>
                     <tr>
                         <th>年度</th>
-                        <th>總投入本金</th>
-                        <th>年末總資產</th>
+                        <th>總投入本金 (美金)</th>
+                        <th>年末總資產 (台幣)</th>
                     </tr>
                 </thead>
                 <tbody id="projection-tbody"></tbody>
@@ -168,18 +168,20 @@
             projectionYears: document.getElementById('projection-years-value')
         };
         const projectionTbody = document.getElementById('projection-tbody');
+        // 修改(3): 新增台幣美金匯率
+        const USD_TO_TWD_RATE = 30;
 
         // --- 主計算函式 ---
         function generateProjection() {
-            // 1. 取得各滑桿的目前數值
-            const initialInvestment = parseFloat(sliders.initialInvestment.value);
-            const monthlyAddition = parseFloat(sliders.monthlyAddition.value);
+            // 1. 取得各滑桿的目前數值 (皆為美金)
+            const initialInvestmentUSD = parseFloat(sliders.initialInvestment.value);
+            const monthlyAdditionUSD = parseFloat(sliders.monthlyAddition.value);
             const annualReturnRate = parseFloat(sliders.annualReturn.value) / 100;
             const years = parseInt(sliders.projectionYears.value);
 
             // 2. 更新滑桿旁的數值顯示
-            values.initialInvestment.textContent = `$ ${initialInvestment.toLocaleString()}`;
-            values.monthlyAddition.textContent = `$ ${monthlyAddition.toLocaleString()}`;
+            values.initialInvestment.textContent = `$ ${initialInvestmentUSD.toLocaleString()}`;
+            values.monthlyAddition.textContent = `$ ${monthlyAdditionUSD.toLocaleString()}`;
             values.annualReturn.textContent = `${(annualReturnRate * 100).toFixed(0)} %`;
             values.projectionYears.textContent = `${years} 年`;
 
@@ -187,24 +189,26 @@
             projectionTbody.innerHTML = '';
 
             // 4. 循環計算每年的數據
-            let futureValue = initialInvestment;
-            let totalPrincipal = initialInvestment;
+            let futureValueUSD = initialInvestmentUSD;
+            let totalPrincipalUSD = initialInvestmentUSD;
             
             for (let i = 1; i <= years; i++) {
-                // 計算當年度的總資產
-                // 年末價值 = (年初本金) * (1 + 年報酬率) + (每月投入 * 12個月) * (1 + 年報酬率)
-                // 這裡採用一個簡化但常用的計算方式，將年度投入視為年中投入來計算利息
-                futureValue = (futureValue + (monthlyAddition * 12)) * (1 + annualReturnRate);
+                // 計算當年度的總資產 (美金)
+                futureValueUSD = (futureValueUSD + (monthlyAdditionUSD * 12)) * (1 + annualReturnRate);
                 
-                // 計算累積投入的總本金
-                totalPrincipal += monthlyAddition * 12;
+                // 計算累積投入的總本金 (美金)
+                totalPrincipalUSD += monthlyAdditionUSD * 12;
+                
+                // 修改(4): 將年末總資產轉換為台幣
+                const futureValueTWD = futureValueUSD * USD_TO_TWD_RATE;
 
                 // 5. 建立新的表格行 (tr) 並填入數據
                 const row = document.createElement('tr');
+                // 修改(5): 更新表格內容以反映正確的幣別
                 row.innerHTML = `
                     <td>第 ${i} 年</td>
-                    <td>$ ${Math.round(totalPrincipal).toLocaleString()}</td>
-                    <td>$ ${Math.round(futureValue).toLocaleString()}</td>
+                    <td>$ ${Math.round(totalPrincipalUSD).toLocaleString()}</td>
+                    <td>$ ${Math.round(futureValueTWD).toLocaleString()}</td>
                 `;
                 projectionTbody.appendChild(row);
             }
