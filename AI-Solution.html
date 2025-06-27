@@ -1,1 +1,51 @@
-<img class="fx-widget-image" alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11345379&type=6">
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的 Widget 頁面</title> <style>
+        /* 讓整個頁面置中，看起來更舒服 */
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            background-color: #f0f0f0; /* 給個背景色，方便看出圖片邊界 */
+        }
+    
+        /* 預設樣式：針對手機螢幕 */
+        .fx-widget-image {
+            /* 在手機上，圖片寬度為自動。這會讓圖片以其原始尺寸顯示 */
+            width: auto; 
+            
+            /* 關鍵！確保圖片最寬不會超過其容器（或螢幕）的寬度，避免跑版 */
+            max-width: 100%; 
+            
+            /* 讓高度隨寬度等比例縮放 */
+            height: auto; 
+            
+            cursor: default;
+        }
+
+        /* 媒體查詢：針對平板與電腦螢幕 */
+        /* 當螢幕寬度大於或等於 768px 時，套用此樣式 */
+        @media (min-width: 768px) {
+            .fx-widget-image {
+                /* 在較大的螢幕上，讓圖片寬度充滿其容器 */
+                width: 100%; 
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <img class="fx-widget-image" alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11345379&type=6">
+
+</body>
+
+</html>
