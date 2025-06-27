@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定期定額投資增長計算器</title>
+    <style>
+        /* --- CSS 樣式 --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .calculator-container {
+            width: 100%;
+            max-width: 700px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #000000;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .description {
+            text-align: center;
+            font-size: 15px;
+            color: #666666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .input-group {
+            margin-bottom: 22px;
+        }
+        .input-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            color: #555555;
+            margin-bottom: 12px;
+        }
+        .input-group .value-display {
+            font-weight: bold;
+            color: #000000;
+            background-color: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .2s;
+        }
+        input[type="range"]:hover { opacity: 1; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: #333333; cursor: pointer; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 22px; height: 22px; background: #333333; cursor: pointer; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .result-section {
+            margin-top: 25px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            max-height: 450px; 
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #projection-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+        #projection-table th {
+            padding: 12px 10px;
+            text-align: right;
+            background-color: #f9f9f9;
+            color: #333333;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        #projection-table td {
+            padding: 12px 10px;
+            text-align: right;
+            border-bottom: 1px solid #eeeeee;
+        }
+        #projection-table tr:last-child td { border-bottom: none; }
+        #projection-table tr:nth-child(even) { background-color: #fdfdfd; }
+        #projection-table td:first-child, #projection-table th:first-child {
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <h2>定期定額投資增長計算器</h2>
+        <p class="description">
+            透過單筆投入加上每月定期定額的策略，看看您的資金在複利效應下能增長到多少。
+        </p>
+
+        <div class="input-group">
+            <label for="initial-investment">首次單筆投入金額 (美金) <span class="value-display" id="initial-investment-value">$ 2,000</span></label>
+            <input type="range" id="initial-investment" min="500" max="30000" step="500" value="2000">
+        </div>
+        <div class="input-group">
+            <label for="monthly-addition">每月加碼金額 (美金) <span class="value-display" id="monthly-addition-value">$ 100</span></label>
+            <input type="range" id="monthly-addition" min="100" max="2500" step="100" value="100">
+        </div>
+        <div class="input-group">
+            <label for="annual-return">年化報酬率 <span class="value-display" id="annual-return-value">10 %</span></label>
+            <input type="range" id="annual-return" min="5" max="50" step="5" value="10">
+        </div>
+        <div class="input-group">
+            <label for="projection-years">投資年期 <span class="value-display" id="projection-years-value">10 年</span></label>
+            <input type="range" id="projection-years" min="1" max="30" step="1" value="10">
+        </div>
+
+        <div class="result-section">
+            <table id="projection-table">
+                <thead>
+                    <tr>
+                        <th>年度</th>
+                        <th>總投入本金</th>
+                        <th>年末總資產</th>
+                    </tr>
+                </thead>
+                <tbody id="projection-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // --- 獲取所有需要的 HTML 元素 ---
+        const sliders = {
+            initialInvestment: document.getElementById('initial-investment'),
+            monthlyAddition: document.getElementById('monthly-addition'),
+            annualReturn: document.getElementById('annual-return'),
+            projectionYears: document.getElementById('projection-years')
+        };
+        const values = {
+            initialInvestment: document.getElementById('initial-investment-value'),
+            monthlyAddition: document.getElementById('monthly-addition-value'),
+            annualReturn: document.getElementById('annual-return-value'),
+            projectionYears: document.getElementById('projection-years-value')
+        };
+        const projectionTbody = document.getElementById('projection-tbody');
+
+        // --- 主計算函式 ---
+        function generateProjection() {
+            // 1. 取得各滑桿的目前數值
+            const initialInvestment = parseFloat(sliders.initialInvestment.value);
+            const monthlyAddition = parseFloat(sliders.monthlyAddition.value);
+            const annualReturnRate = parseFloat(sliders.annualReturn.value) / 100;
+            const years = parseInt(sliders.projectionYears.value);
+
+            // 2. 更新滑桿旁的數值顯示
+            values.initialInvestment.textContent = `$ ${initialInvestment.toLocaleString()}`;
+            values.monthlyAddition.textContent = `$ ${monthlyAddition.toLocaleString()}`;
+            values.annualReturn.textContent = `${(annualReturnRate * 100).toFixed(0)} %`;
+            values.projectionYears.textContent = `${years} 年`;
+
+            // 3. 清空舊表格內容
+            projectionTbody.innerHTML = '';
+
+            // 4. 循環計算每年的數據
+            let futureValue = initialInvestment;
+            let totalPrincipal = initialInvestment;
+            
+            for (let i = 1; i <= years; i++) {
+                // 計算當年度的總資產
+                // 年末價值 = (年初本金) * (1 + 年報酬率) + (每月投入 * 12個月) * (1 + 年報酬率)
+                // 這裡採用一個簡化但常用的計算方式，將年度投入視為年中投入來計算利息
+                futureValue = (futureValue + (monthlyAddition * 12)) * (1 + annualReturnRate);
+                
+                // 計算累積投入的總本金
+                totalPrincipal += monthlyAddition * 12;
+
+                // 5. 建立新的表格行 (tr) 並填入數據
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>第 ${i} 年</td>
+                    <td>$ ${Math.round(totalPrincipal).toLocaleString()}</td>
+                    <td>$ ${Math.round(futureValue).toLocaleString()}</td>
+                `;
+                projectionTbody.appendChild(row);
+            }
+        }
+
+        // --- 監聽所有滑桿的 'input' 事件 ---
+        for (const key in sliders) {
+            sliders[key].addEventListener('input', generateProjection);
+        }
+
+        // --- 初始載入 ---
+        window.addEventListener('DOMContentLoaded', generateProjection);
+    </script>
+
+</body>
+</html>
