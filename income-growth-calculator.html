@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>複利增長收入計算器</title>
+    <title>進階複利增長計算器 (激勵版)</title>
     <style>
-        /* --- 基礎與字體設定 (與前一版相同) --- */
+        /* --- CSS 樣式與前一版相同 --- */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f7f7f7;
@@ -18,11 +18,9 @@
             min-height: 100vh;
             box-sizing: border-box;
         }
-
-        /* --- 計算器主容器 (與前一版相同) --- */
         .calculator-container {
             width: 100%;
-            max-width: 700px; /* 稍微加寬以容納表格 */
+            max-width: 700px;
             background-color: #ffffff;
             border: 1px solid #e0e0e0;
             border-radius: 12px;
@@ -30,8 +28,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
         }
-
-        /* --- 標題與說明文字 --- */
         h2 {
             text-align: center;
             color: #000000;
@@ -45,12 +41,9 @@
             margin-bottom: 25px;
             line-height: 1.6;
         }
-
-        /* --- 參數輸入區塊 (與前一版相同) --- */
         .input-group {
             margin-bottom: 22px;
         }
-
         .input-group label {
             display: flex;
             justify-content: space-between;
@@ -59,7 +52,6 @@
             color: #555555;
             margin-bottom: 12px;
         }
-
         .input-group .value-display {
             font-weight: bold;
             color: #000000;
@@ -68,8 +60,6 @@
             border-radius: 6px;
             font-size: 15px;
         }
-
-        /* --- 滑桿樣式 (與前一版相同) --- */
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -87,41 +77,28 @@
         input[type="range"]::-moz-range-thumb {
             width: 22px; height: 22px; background: #333333; cursor: pointer; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-
-        /* --- 結果區塊：表格樣式 --- */
         .result-section {
             margin-top: 30px;
             width: 100%;
-            overflow-x: auto; /* 在小螢幕上如果表格太寬可以滑動 */
+            overflow-x: auto;
         }
-        
         #projection-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 15px;
         }
-
         #projection-table th, #projection-table td {
             padding: 12px 10px;
             text-align: right;
             border-bottom: 1px solid #eeeeee;
         }
-        
         #projection-table th {
             background-color: #f9f9f9;
             color: #333333;
             font-weight: 600;
-            text-align: right;
         }
-        
-        #projection-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        #projection-table tr:nth-child(even) {
-            background-color: #fdfdfd;
-        }
-        
+        #projection-table tr:last-child td { border-bottom: none; }
+        #projection-table tr:nth-child(even) { background-color: #fdfdfd; }
         #projection-table td:first-child, #projection-table th:first-child {
             text-align: center;
             font-weight: bold;
@@ -131,9 +108,9 @@
 <body>
 
     <div class="calculator-container">
-        <h2>複利增長與新資金注入計算器</h2>
+        <h2>進階複利增長計算器 (激勵版)</h2>
         <p class="description">
-            此計算器模擬每年持續投入新資金，同時舊有資金也會增長（客戶加碼或再投資），觀察多年累積下的複利效果。
+            模擬每年投入新資金(美金)，並計入投資本身報酬與舊用戶加碼後，預估的台幣收益。
         </p>
 
         <div class="input-group">
@@ -141,16 +118,20 @@
             <input type="range" id="new-users" min="1" max="50" step="1" value="10">
         </div>
         <div class="input-group">
-            <label for="avg-investment">新用戶平均資金 <span class="value-display" id="avg-investment-value">10,000</span></label>
+            <label for="avg-investment">新用戶平均資金 (美金) <span class="value-display" id="avg-investment-value">$ 10,000</span></label>
             <input type="range" id="avg-investment" min="1000" max="100000" step="1000" value="10000">
         </div>
         <div class="input-group">
-            <label for="commission-rate">佣金利潤率 <span class="value-display" id="commission-rate-value">60.0 %</span></label>
-            <input type="range" id="commission-rate" min="1" max="100" step="0.5" value="60">
+            <label for="investment-return">投資年化報酬率 <span class="value-display" id="investment-return-value">10 %</span></label>
+            <input type="range" id="investment-return" min="0" max="50" step="1" value="10">
         </div>
         <div class="input-group">
-            <label for="reinvestment-rate">舊資金年增長率 (自行加碼) <span class="value-display" id="reinvestment-rate-value">15 %</span></label>
+            <label for="reinvestment-rate">舊用戶加碼率 <span class="value-display" id="reinvestment-rate-value">15 %</span></label>
             <input type="range" id="reinvestment-rate" min="0" max="50" step="1" value="15">
+        </div>
+        <div class="input-group">
+            <label for="commission-rate">佣金利潤率 <span class="value-display" id="commission-rate-value">2.0 %</span></label>
+            <input type="range" id="commission-rate" min="0.5" max="5.0" step="0.1" value="2.0">
         </div>
         <div class="input-group">
             <label for="projection-years">預計總年期 <span class="value-display" id="projection-years-value">10 年</span></label>
@@ -162,89 +143,84 @@
                 <thead>
                     <tr>
                         <th>年度</th>
-                        <th>總管理資金</th>
-                        <th>當年度總利潤</th>
-                        <th>當年度月均收入</th>
+                        <th>總管理資金 (美金)</th>
+                        <th>當年度總佣金 (台幣)</th>
+                        <th>當年度月均佣金 (台幣)</th>
                     </tr>
                 </thead>
-                <tbody id="projection-tbody">
-                    </tbody>
+                <tbody id="projection-tbody"></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // --- 獲取所有需要的 HTML 元素 ---
         const sliders = {
             newUsers: document.getElementById('new-users'),
             avgInvestment: document.getElementById('avg-investment'),
-            commissionRate: document.getElementById('commission-rate'),
+            investmentReturn: document.getElementById('investment-return'),
             reinvestmentRate: document.getElementById('reinvestment-rate'),
+            commissionRate: document.getElementById('commission-rate'),
             projectionYears: document.getElementById('projection-years')
         };
         const values = {
             newUsers: document.getElementById('new-users-value'),
             avgInvestment: document.getElementById('avg-investment-value'),
-            commissionRate: document.getElementById('commission-rate-value'),
+            investmentReturn: document.getElementById('investment-return-value'),
             reinvestmentRate: document.getElementById('reinvestment-rate-value'),
+            commissionRate: document.getElementById('commission-rate-value'),
             projectionYears: document.getElementById('projection-years-value')
         };
         const projectionTbody = document.getElementById('projection-tbody');
+        const USD_TO_TWD_RATE = 30;
 
-        // --- 主計算函式 ---
         function generateProjection() {
-            // 1. 取得各滑桿的目前數值
             const newUsersPerYear = parseInt(sliders.newUsers.value);
-            const avgInvestmentPerUser = parseFloat(sliders.avgInvestment.value);
-            const commissionRate = parseFloat(sliders.commissionRate.value) / 100;
+            const avgInvestmentPerUserUSD = parseFloat(sliders.avgInvestment.value);
+            const investmentReturnRate = parseFloat(sliders.investmentReturn.value) / 100;
             const reinvestmentRate = parseFloat(sliders.reinvestmentRate.value) / 100;
+            const commissionRate = parseFloat(sliders.commissionRate.value) / 100;
             const years = parseInt(sliders.projectionYears.value);
 
-            // 2. 更新滑桿旁的數值顯示
             values.newUsers.textContent = `${newUsersPerYear} 人`;
-            values.avgInvestment.textContent = avgInvestmentPerUser.toLocaleString();
-            values.commissionRate.textContent = `${(commissionRate * 100).toFixed(1)} %`;
+            values.avgInvestment.textContent = `$ ${avgInvestmentPerUserUSD.toLocaleString()}`;
+            values.investmentReturn.textContent = `${(investmentReturnRate * 100).toFixed(0)} %`;
             values.reinvestmentRate.textContent = `${(reinvestmentRate * 100).toFixed(0)} %`;
+            values.commissionRate.textContent = `${(commissionRate * 100).toFixed(1)} %`;
             values.projectionYears.textContent = `${years} 年`;
 
-            // 3. 清空舊表格內容
             projectionTbody.innerHTML = '';
 
-            // 4. 循環計算每年的數據
-            let totalCapital = 0;
+            let totalCapitalUSD = 0;
             for (let i = 1; i <= years; i++) {
-                // 計算舊資金的增長 (客戶加碼)
-                const capitalGrowth = totalCapital * reinvestmentRate;
-                
-                // 計算當年新注入的資金
-                const newCapital = newUsersPerYear * avgInvestmentPerUser;
+                const capitalGrowthUSD = totalCapitalUSD * reinvestmentRate;
+                const newCapitalUSD = newUsersPerYear * avgInvestmentPerUserUSD;
+                const capitalBaseUSD = totalCapitalUSD + capitalGrowthUSD + newCapitalUSD;
+                const investmentProfitUSD = capitalBaseUSD * investmentReturnRate;
+                const endOfYearCapitalUSD = capitalBaseUSD + investmentProfitUSD;
 
-                // 更新總管理資金
-                totalCapital += capitalGrowth + newCapital;
+                // 佣金計算
+                const annualCommissionUSD = endOfYearCapitalUSD * commissionRate;
+                const annualCommissionTWD = annualCommissionUSD * USD_TO_TWD_RATE;
+                const monthlyCommissionTWD = annualCommissionTWD / 12;
 
-                // 計算當年度利潤
-                const annualProfit = totalCapital * commissionRate;
-                const monthlyIncome = annualProfit / 12;
-
-                // 5. 建立新的表格行 (tr) 並填入數據
+                // --- 修改(2): 建立表格行時，第二欄直接使用美金變數 ---
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>第 ${i} 年</td>
-                    <td>${Math.round(totalCapital).toLocaleString()}</td>
-                    <td>${Math.round(annualProfit).toLocaleString()}</td>
-                    <td>${Math.round(monthlyIncome).toLocaleString()}</td>
+                    <td>$ ${Math.round(endOfYearCapitalUSD).toLocaleString()}</td>
+                    <td>${Math.round(annualCommissionTWD).toLocaleString()}</td>
+                    <td>${Math.round(monthlyCommissionTWD).toLocaleString()}</td>
                 `;
                 projectionTbody.appendChild(row);
+
+                totalCapitalUSD = endOfYearCapitalUSD;
             }
         }
 
-        // --- 監聽所有滑桿的 'input' 事件 ---
         for (const key in sliders) {
             sliders[key].addEventListener('input', generateProjection);
         }
 
-        // --- 初始載入 ---
-        // 頁面一載入，就用預設值生成一次表格
         window.addEventListener('DOMContentLoaded', generateProjection);
     </script>
 
