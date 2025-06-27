@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>可持續收入計算器</title>
+    <title>可持續收入計算器 (台幣收益版)</title>
     <style>
-        /* --- 基礎與字體設定 --- */
+        /* --- CSS 樣式與原版完全相同，此處省略以節省篇幅 --- */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f7f7f7; /* 背景使用淡灰色 */
-            color: #333333; /* 主要文字為深灰色 */
+            background-color: #f7f7f7;
+            color: #333333;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -18,51 +18,41 @@
             min-height: 100vh;
             box-sizing: border-box;
         }
-
-        /* --- 計算器主容器 --- */
         .calculator-container {
             width: 100%;
-            max-width: 600px; /* 在大螢幕上限制最大寬度 */
-            background-color: #ffffff; /* 白色背景 */
-            border: 1px solid #e0e0e0; /* 淺灰色邊框 */
+            max-width: 600px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
             border-radius: 12px;
             padding: 25px 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
         }
-
-        /* --- 標題 --- */
         h2 {
             text-align: center;
-            color: #000000; /* 黑色標題 */
+            color: #000000;
             margin-top: 0;
             margin-bottom: 25px;
         }
-
-        /* --- 參數輸入區塊 --- */
         .input-group {
             margin-bottom: 25px;
         }
-
         .input-group label {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 16px;
-            color: #555555; /* 次要文字為灰色 */
+            color: #555555;
             margin-bottom: 12px;
         }
-
         .input-group .value-display {
             font-weight: bold;
-            color: #000000; /* 數值顯示為黑色 */
+            color: #000000;
             background-color: #f0f0f0;
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 15px;
         }
-
-        /* --- 滑桿樣式 --- */
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -73,23 +63,20 @@
             opacity: 0.9;
             transition: opacity .2s;
         }
-
         input[type="range"]:hover {
             opacity: 1;
         }
-
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 22px;
             height: 22px;
-            background: #333333; /* 滑塊為深灰色 */
+            background: #333333;
             cursor: pointer;
             border-radius: 50%;
             border: 3px solid #ffffff;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-
         input[type="range"]::-moz-range-thumb {
             width: 22px;
             height: 22px;
@@ -99,38 +86,31 @@
             border: 3px solid #ffffff;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-
-        /* --- 結果顯示區塊 --- */
         .result-section {
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid #e0e0e0;
             text-align: center;
         }
-
         .result-section h3 {
             color: #555555;
             font-size: 18px;
             margin-bottom: 10px;
         }
-
         .result-section .monthly-income {
             font-size: 32px;
             font-weight: bold;
-            color: #000000; /* 結果數字為黑色 */
+            color: #000000;
         }
-        
         .result-section .monthly-income span {
             font-size: 20px;
             color: #555555;
             margin-left: 5px;
         }
-        
-        /* --- 補充說明文字 --- */
         .sustainability-note {
             text-align: center;
             font-size: 14px;
-            color: #888888; /* 註解文字為更淺的灰色 */
+            color: #888888;
             margin-top: 25px;
             padding: 10px;
             background-color: #f9f9f9;
@@ -141,12 +121,12 @@
 <body>
 
     <div class="calculator-container">
-        <h2>可持續收入計算器</h2>
+        <h2>可持續收入計算器 (台幣收益版)</h2>
 
         <div class="input-group">
             <label for="avg-deposit">
-                平均每個用戶入金量
-                <span class="value-display" id="avg-deposit-value">10000</span>
+                平均每個用戶入金量 (美金)
+                <span class="value-display" id="avg-deposit-value">$ 10,000</span>
             </label>
             <input type="range" id="avg-deposit" min="500" max="100000" step="500" value="10000">
         </div>
@@ -170,7 +150,7 @@
         <div class="result-section">
             <h3>預估每月平均收入</h3>
             <p class="monthly-income" id="monthly-income-result">
-                --<span>元</span>
+                --<span>台幣</span>
             </p>
         </div>
         
@@ -190,39 +170,42 @@
         const commissionRateValue = document.getElementById('commission-rate-value');
         const monthlyIncomeResult = document.getElementById('monthly-income-result');
 
+        // --- 修改(3): 新增匯率常數，可在此手動更新 ---
+        const USD_TO_TWD_RATE = 32.3; // 假設 1 美金 = 32.3 台幣
+
         // --- 計算並更新結果的函式 ---
         function calculateAndDisplay() {
             // 1. 取得各滑桿的目前數值
-            const deposit = parseFloat(avgDepositSlider.value);
+            const depositUSD = parseFloat(avgDepositSlider.value); // 數值代表美金
             const users = parseInt(userCountSlider.value);
             const commission = parseFloat(commissionRateSlider.value);
 
             // 2. 更新滑桿旁的數值顯示
-            avgDepositValue.textContent = deposit.toLocaleString(); // 加上千分位
+            avgDepositValue.textContent = `$ ${depositUSD.toLocaleString()}`; // 加上 $ 符號
             userCountValue.textContent = `${users} 人`;
             commissionRateValue.textContent = `${commission.toFixed(1)} %`;
 
-            // 3. 核心計算邏輯
-            // 年總利潤 = 平均入金量 * 用戶數 * (佣金率 / 100)
-            const annualProfit = deposit * users * (commission / 100);
+            // 3. 核心計算邏輯 (已修改)
+            // 年總利潤(美金) = 平均入金量(美金) * 用戶數 * (佣金率 / 100)
+            const annualProfitUSD = depositUSD * users * (commission / 100);
             
-            // 每月平均收入 = 年總利潤 / 12
-            const monthlyIncome = annualProfit / 12;
+            // 年總利潤(台幣) = 年總利潤(美金) * 匯率
+            const annualProfitTWD = annualProfitUSD * USD_TO_TWD_RATE;
 
-            // 4. 將計算結果顯示在頁面上
-            // toLocaleString() 可讓數字以千分位分隔，更易閱讀
-            // toFixed(0) 四捨五入到整數位
-            monthlyIncomeResult.innerHTML = `${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}<span>元</span>`;
+            // 每月平均收入(台幣) = 年總利潤(台幣) / 12
+            const monthlyIncomeTWD = annualProfitTWD / 12;
+
+            // 4. 將計算結果(台幣)顯示在頁面上
+            // 修改(4): 將<span>中的單位改為"台幣"
+            monthlyIncomeResult.innerHTML = `${monthlyIncomeTWD.toLocaleString('en-US', { maximumFractionDigits: 0 })}<span>台幣</span>`;
         }
 
-        // --- 監聽事件 ---
-        // 當任何一個滑桿被拖動時，就重新計算一次
+        // --- 監聽事件 (無變動) ---
         avgDepositSlider.addEventListener('input', calculateAndDisplay);
         userCountSlider.addEventListener('input', calculateAndDisplay);
         commissionRateSlider.addEventListener('input', calculateAndDisplay);
 
-        // --- 初始載入 ---
-        // 頁面一載入，就先用預設值計算並顯示一次結果
+        // --- 初始載入 (無變動) ---
         window.addEventListener('DOMContentLoaded', calculateAndDisplay);
     </script>
 
