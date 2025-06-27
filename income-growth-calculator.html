@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>進階複利增長計算器</title>
+    <title>進階複利增長計算器 (激勵版)</title>
     <style>
         /* --- CSS 樣式與前一版相同 --- */
         body {
@@ -103,22 +103,32 @@
             text-align: center;
             font-weight: bold;
         }
+        /* --- 新增：Notion 操作提示樣式 --- */
+        .notion-helper {
+            text-align: center;
+            font-size: 13px;
+            color: #999999;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
 
     <div class="calculator-container">
-        <h2>進階複利增長計算器</h2>
+        <h2>進階複利增長計算器 (激勵版)</h2>
         <p class="description">
             模擬每年投入新資金(美金)，並計入投資本身報酬與舊用戶加碼後，預估的台幣收益。
         </p>
-
+        
         <div class="input-group">
             <label for="new-users">每年新招攬用戶數 <span class="value-display" id="new-users-value">10 人</span></label>
             <input type="range" id="new-users" min="1" max="50" step="1" value="10">
         </div>
         <div class="input-group">
-            <label for="avg-investment">新用戶平均資金 <span class="value-display" id="avg-investment-value">$ 10,000</span></label>
+            <label for="avg-investment">新用戶平均資金 (美金) <span class="value-display" id="avg-investment-value">$ 10,000</span></label>
             <input type="range" id="avg-investment" min="1000" max="100000" step="1000" value="10000">
         </div>
         <div class="input-group">
@@ -151,9 +161,14 @@
                 <tbody id="projection-tbody"></tbody>
             </table>
         </div>
+
+        <div class="notion-helper">
+            <p>💡 如果計算器顯示不完整，請用滑鼠拖動此區塊的「下邊框」以調整高度。</p>
+        </div>
     </div>
 
     <script>
+        // JavaScript 程式碼部分與前一版完全相同，無需改動
         const sliders = {
             newUsers: document.getElementById('new-users'),
             avgInvestment: document.getElementById('avg-investment'),
@@ -198,12 +213,10 @@
                 const investmentProfitUSD = capitalBaseUSD * investmentReturnRate;
                 const endOfYearCapitalUSD = capitalBaseUSD + investmentProfitUSD;
 
-                // 佣金計算
                 const annualCommissionUSD = endOfYearCapitalUSD * commissionRate;
                 const annualCommissionTWD = annualCommissionUSD * USD_TO_TWD_RATE;
                 const monthlyCommissionTWD = annualCommissionTWD / 12;
 
-                // --- 修改(2): 建立表格行時，第二欄直接使用美金變數 ---
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>第 ${i} 年</td>
