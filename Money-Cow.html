@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myfxbook Widget (靠左對齊)</title>
+
+    <style>
+        body {
+            /* 移除所有內外邊距 */
+            margin: 0;
+            
+            /* 左右留一點空間，避免圖片緊貼螢幕邊緣 */
+            padding: 0 20px; 
+            
+            /* 使用 Flexbox */
+            display: flex;
+
+            /* --- 修改點 --- */
+            /* 將 center (置中) 改為 flex-start (從頭開始)，即可靠左對齊 */
+            justify-content: flex-start; 
+            
+            /* 繼續保持垂直置中，如果您希望也靠上對齊，可以將此行改為 align-items: flex-start; */
+            align-items: center;
+
+            /* 確保佈局至少有一個螢幕的高度 */
+            min-height: 100vh; 
+            
+            /* 加上此行可以避免 padding 造成卷軸，是個好習慣 */
+            box-sizing: border-box;
+        }
+
+        .fx-widget-image {
+            /* 圖片樣式維持不變 */
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <img class="fx-widget-image" alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11598432&type=6">
+
+</body>
+</html>
