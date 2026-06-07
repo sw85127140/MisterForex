@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Myfxbook Widget (靠左對齊)</title>
+    <title>Myfxbook Widget (靠左對齊+超連結)</title>
 
     <style>
         body {
@@ -16,17 +16,16 @@
             /* 使用 Flexbox */
             display: flex;
 
-            /* --- 修改點 --- */
             /* 將 center (置中) 改為 flex-start (從頭開始)，即可靠左對齊 */
             justify-content: flex-start; 
             
-            /* 繼續保持垂直置中，如果您希望也靠上對齊，可以將此行改為 align-items: flex-start; */
+            /* 繼續保持垂直置中 */
             align-items: center;
 
             /* 確保佈局至少有一個螢幕的高度 */
             min-height: 100vh; 
             
-            /* 加上此行可以避免 padding 造成卷軸，是個好習慣 */
+            /* 避免 padding 造成卷軸 */
             box-sizing: border-box;
         }
 
@@ -42,7 +41,10 @@
 
 <body>
 
-    <img class="fx-widget-image" alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=11996863&type=6">
+    <!-- 這裡加入了超連結，並更新了最新的 Account OID -->
+    <a href="https://www.myfxbook.com/members/sagen520/red-lion-pepperstone/12067273" target="_blank" rel="noopener noreferrer">
+        <img class="fx-widget-image" alt="widget" src="https://widget.myfxbook.com/widget/widget.png?accountOid=12067273&type=6">
+    </a>
 
 </body>
 </html>
